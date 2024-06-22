@@ -1,4 +1,39 @@
 
+;=================================================================
+;not mine
+
+;search for 
+;   ?newchange?
+;   xmaxrayx
+;=================================================================
+
+{   
+    #Include <maxray\randomFilefromFolder_v1_>
+    #HotIf WinExist("Quick Convertor V2")
+    f1::{
+        A_Clipboard := (V2Edit.Text)
+        Sleep(50)
+        V1Edit.Text := ""
+        a := randomFileFromFolder_v1_(A_ScriptDir "\Sounds\copy", )
+        SoundPlay(a)
+        a := ""
+        }
+
+    f2::{
+        A_Clipboard := (V2Edit.Text)
+        Sleep(50)
+        V1Edit.Text := ""
+        a := randomFileFromFolder_v1_(A_ScriptDir "\Sounds\copy&close", )
+        SoundPlay(a,1)
+        a := randomFileFromFolder_v1_(A_ScriptDir "\Sounds\goodbey", )
+        SoundPlay(a,1)
+        ExitApp()
+
+    }
+}
+
+
+
 { ;FILE_NAME:  QuickConverterV2.ahk - v2 - Converts AutoHotkey v1.1 to v2.0
   ; REQUIRES: AutoHotkey v2.0+
   ; Language:       English
@@ -39,6 +74,7 @@
 { ;INCLUDES:
     #Include ConvertFuncs.ahk
     #Include <_GuiCtlExt>
+#Include <maxray\randomPickAndPlay___Folder\randomPickAndPlay___v0_2>
 }
 { ;VARIABLES:
     global icons, TestMode, TestFailing, FontSize, ViewExpectedCode, GuiWidth, GuiHeight
@@ -536,6 +572,7 @@ Gui_Size(thisGui, MinMax, Width, Height)  ; Expand/Shrink ListView and TreeView 
     ButtonCloseV1.Move(TreeViewWidth+28,ButtonHeight)
     oButtonConvert.Move(TreeViewWidth+EditWith-60,ButtonHeight)
     ButtonRunV2.Move(TreeViewWidth+EditWith,ButtonHeight)
+    copyButton.Move(TreeViewWidth+EditWith+170,ButtonHeight)
     ButtonCloseV2.Move(TreeViewWidth+EditWith+28,ButtonHeight)
     ButtonCompDiffV2.Move(TreeViewWidth+EditWith+56,ButtonHeight)
     ButtonCompVscV2.Move(TreeViewWidth+EditWith+84,ButtonHeight)
@@ -637,7 +674,7 @@ GuiTest(strV1Script:="")
     CheckBoxViewSymbols := MyGui.Add("CheckBox", "yp x+60", "Symbols")
     CheckBoxViewSymbols.StatusBar := "Display invisible symbols like spaces, tabs and linefeeds"
     CheckBoxViewSymbols.OnEvent("Click", ViewSymbols)
-    V1Edit := MyGui.Add("Edit", "x280 y0 w600 vvCodeV1 +Multi +WantTab +0x100", strV1Script)  ; Add a fairly wide edit control at the top of the window.
+    V1Edit := MyGui.Add("Edit", "x280 y0 w600 vvCodeV1 +Multi +WantTab +0x100", strV1Script A_Clipboard ) ;xMaxrayx ;?newchange?  ; Add a fairly wide edit control at the top of the window.
     V1Edit.OnEvent("Change",Edit_Change)
 
     ButtonRunV1 := MyGui.AddPicButton("w24 h24", "mmcndmgr.dll","icon33 h23")
@@ -652,19 +689,31 @@ GuiTest(strV1Script:="")
     oButtonConvert := MyGui.AddPicButton("w60 h22", "netshell.dll","icon98 h20")
     oButtonConvert.StatusBar := "Convert V1 code again to V2"
     oButtonConvert.OnEvent("Click", ButtonConvert)
-    V2Edit := MyGui.Add("Edit", "x600 ym w600 vvCodeV2 +Multi +WantTab +0x100", "")  ; Add a fairly wide edit control at the top of the window.
+    V2Edit := MyGui.Add("Edit", "x600 ym w600 vvCodeV2 +Multi +WantTab +0x100", "")
+    
+    ; Add a fairly wide edit control at the top of the window.
     V2Edit.OnEvent("Change",Edit_Change)
     V2ExpectedEdit := MyGui.Add("Edit", "x1000 ym w600 H100 vvCodeV2Expected +Multi +WantTab +0x100", "")  ; Add a fairly wide edit control at the top of the window.
     V2ExpectedEdit.OnEvent("Change",Edit_Change)
+    
+
+    copyButton := MyGui.Add("Button" ,, "copy") ;xmaxrayx ?newchange? 
+    copyButton.OnEvent("Click", CopyToClipboard) ;xmaxrayx ?newchange? 
+    CopyToClipboard(*){
+        A_Clipboard := V2Edit.Text
+    }
+
+
+
 
     ButtonRunV2 := MyGui.AddPicButton("w24 h24", "mmcndmgr.dll","icon33 h23")
     ButtonRunV2.StatusBar := "Run this code in Autohotkey V2"
     ButtonRunV2.OnEvent("Click", RunV2)
-
+    
     ButtonCloseV2 := MyGui.AddPicButton("w24 h24 x+10 yp Disabled", "mmcndmgr.dll","icon62 h23")
     ButtonCloseV2.StatusBar := "Close the running V2 code"
     ButtonCloseV2.OnEvent("Click", CloseV2)
-
+    
     ButtonCompDiffV2 := MyGui.AddPicButton("w24 h24", "shell32.dll","icon239 h20")
     ButtonCompDiffV2.StatusBar := "Compare V1 and V2 code"
     ButtonCompDiffV2.OnEvent("Click", CompDiffV2)
@@ -672,154 +721,155 @@ GuiTest(strV1Script:="")
     ButtonCompVscV2.StatusBar := "Compare V1 and V2 code in VS Code"
     if !FileExist("C:\Users\" A_UserName "\AppData\Local\Programs\Microsoft VS Code\Code.exe"){
         ButtonCompVscV2.Visible := 0
-    }
-    ButtonCompVscV2.OnEvent("Click", CompVscV2)
-
-    ButtonRunV2E := MyGui.AddPicButton("w24 h24 x+10 yp", "mmcndmgr.dll","icon33 h23")
-    ButtonRunV2.StatusBar := "Run expected V2 code"
-    ButtonRunV2E.OnEvent("Click", RunV2E)
-
-    ButtonCloseV2E := MyGui.AddPicButton("w24 h24 Disabled", "mmcndmgr.dll","icon62 h23")
-    ButtonCloseV2E.StatusBar := "Close the running expected V2 code"
-    ButtonCloseV2E.OnEvent("Click", CloseV2E)
-
-    ButtonCompDiffV2E := MyGui.AddPicButton("w24 h24", "shell32.dll","icon239 h20")
-    ButtonCompDiffV2E.StatusBar := "Compare V2 and expected V2 code"
-    ButtonCompDiffV2E.OnEvent("Click", CompDiffV2E)
-    ButtonCompVscV2E := MyGui.Add("Button", " x+10 yp w80", "Compare VSC" )
-    ButtonCompVscV2E.StatusBar := "Compare V2 and Expected V2 code in VS Code"
-    if !FileExist("C:\Users\" A_UserName "\AppData\Local\Programs\Microsoft VS Code\Code.exe"){
-        ButtonCompVscV2E.Visible := 0
-    }
-    ButtonCompVscV2E.OnEvent("Click", CompVscV2E)
-    CheckBoxV2E := MyGui.Add("CheckBox", "yp x+50 Checked", "Expected")
-    CheckBoxV2E.Value := ViewExpectedCode
-
-    CheckBoxV2E.StatusBar := "Display expected V2 code if it exists"
-    CheckBoxV2E.OnEvent("Click", ViewV2E)
-
-    ; Save as test
-    ButtonValidateConversion := MyGui.AddPicButton("w24 h24", "shell32.dll","icon259 h18")
-    ButtonValidateConversion.StatusBar := "Save the converted code as valid test"
-    ButtonValidateConversion.OnEvent("Click", ButtonGenerateTest)
-
-    ; Call Gui_Size whenever the window is resized:
-    MyGui.OnEvent("Size", Gui_Size)
-
-    MyGui.OnEvent("Close", Gui_Close)
-    ; MyGui.OnEvent("Escape", (*) => ExitApp())
-
-    FileMenu := Menu()
-    FileMenu.Add "Run Yunit tests", (*) => Run('"' A_ScriptDir "\AutoHotKey Exe\AutoHotkeyV2.exe" '" "' A_ScriptDir '\Tests\Tests.ahk"')
-    FileMenu.Add "Open test folder", (*) => Run(TreeRoot)
-    FileMenu.Add()
-    FileMenu.Add( "E&xit", (*) => ExitApp())
-    SettingsMenu := Menu()
-    SettingsMenu.Add("Testmode", MenuTestMode)
-    SettingsMenu.Add("Include Failing", MenuTestFailing)
-    TestMenu := Menu()
-    TestMenu.Add("AddBracketToHotkeyTest", (*) => V2Edit.Text := AddBracket(V1Edit.Text))
-    TestMenu.Add("GetAltLabelsMap", (*) => V2Edit.Text := GetAltLabelsMap(V1Edit.Text))
-    ViewMenu := Menu()
-    ViewMenu.Add("Zoom In`tCtrl+NumpadAdd", MenuZoomIn)
-    ViewMenu.Add("Zoom Out`tCtrl+NumpadSub", MenuZoomOut)
-    ViewMenu.Add("Show Symols", MenuShowSymols)
-    ViewMenu.Add()
-    ViewMenu.Add("View Tree",MenuViewtree)
-    ViewMenu.Add("View Expected Code",MenuViewExpected)
-    HelpMenu := Menu()
-    HelpMenu.Add("Command Help`tF1",MenuCommandHelp)
-    HelpMenu.Add()
-    HelpMenu.Add("Online v1 docs", (*)=>Run("https://www.autohotkey.com/docs/v1/index.htm"))
-    HelpMenu.Add("Online v2 docs", (*)=>Run("https://www.autohotkey.com/docs/v2/index.htm"))
-    HelpMenu.Add()
-    HelpMenu.Add("Report Issue", (*)=>Run("https://github.com/mmikeww/AHK-v2-script-converter/issues/new"))
-    HelpMenu.Add("Open Github", (*)=>Run("https://github.com/mmikeww/AHK-v2-script-converter"))
-    Menus := MenuBar()
-    Menus.Add("&File", FileMenu)  ; Attach the two submenus that were created above.
-    Menus.Add("&Settings", SettingsMenu)
-    Menus.Add("&View", ViewMenu)
-    Menus.Add( "&Reload", (*) => (Gui_Close(MyGui),Reload()))
-    Menus.Add( "Test", TestMenu)
-    Menus.Add( "Help", HelpMenu)
-    MyGui.MenuBar := Menus
-
-    ; TODO: This doesn't check box
-    if ViewExpectedCode{
-        ViewMenu.Check("View Expected Code")
-    }
-    MyGui.Opt("+MinSize450x200")
-    MyGui.OnEvent("DropFiles",Gui_DropFiles)
-
-    ; Correct coordinates to a visible position inside the screens
-    GuiXOpt := (GuiX!="") ? " x" ((GuiX<0) ? 0 : (GuiX+GuiWidth>SysGet(78)) ? SysGet(78)-GuiWidth : GuiX) : ""
-    GuiYOpt := (GuiY!="") ? " y" ((GuiY<0) ? 0 : (GuiY+GuiHeight>SysGet(79)) ? SysGet(79)-GuiHeight : GuiY) : ""
-
-    ; Display the window. The OS will notify the script whenever the user performs an eligible action:
-    MyGui.Show("h" GuiHeight " w" GuiWidth GuiXOpt GuiYOpt)
-    sleep(500)
-    UserClicked := true
-
-    if TestMode {
-        TestMode := !TestMode
-        UserClicked := false
-        MenuTestMode('')
-    }
-
-    if TestFailing {
-        TestFailing := !TestFailing
-        UserClicked := false
-        MenuTestFailing('')
-    }
-
-    if (strV1Script!=""){
-        ButtonConvert(myGui)
-    }
-
-    OnMessage(0x0200, On_WM_MOUSEMOVE)
-    OnMessage(0x03, On_WM_MOVE)
-    Return
-}
-
-MenuCommandHelp(*)
-{
-    ogcFocused := MyGui.FocusedCtrl
-    Type := ogcFocused.Type
-    if (Type="Edit"){
-
-        count := EditGetCurrentLine(ogcFocused)
-        text := EditGetLine(count, ogcFocused)
-        count := EditGetCurrentCol(ogcFocused)
-
-        PreString := RegExReplace(SubStr(text,1,count-1), ".*?([^,，\s\.\t`"\(\)`']*$)", "$1")
-        PostString := RegExReplace(SubStr(text,count), "(^[^,，\s,\.\t`"\(\)`']*).*", "$1")
-        word := PreString PostString
-
-        if !isSet(Url){
-            WBGui := Gui()
-            WBGui.Opt("+Resize")
-            WBGui.MarginX := "0", WBGui.MarginY := "0"
-            global Url,WB,WBGui
-            WBGui.Title := "AutoHotKey Help"
-            ogcActiveXWBC := WBGui.Add("ActiveX", "xm w980 h640 vIE", "Shell.Explorer")
-            WB := ogcActiveXWBC.Value
-            WBGui.OnEvent("Size", WBGui_Size)
         }
-
-        if InStr(ogcFocused.Name,"V1"){
-            URLSearch := "https://www.autohotkey.com/docs/v1/search.htm?q="
-        }
-        else{
-            URLSearch := "https://www.autohotkey.com/docs/v2/search.htm?q="
-        }
-        URL := URLSearch word "&m=2"
-
-        WB.Navigate(URL)
-        FuncObj := gui_KeyDown.Bind(WB)
-        OnMessage(0x100, FuncObj, 2)
-        WBGui.Show()
-
-        WBGui_Size(thisGui, MinMax, Width, Height){
+        ButtonCompVscV2.OnEvent("Click", CompVscV2)
+        
+        ButtonRunV2E := MyGui.AddPicButton("w24 h24 x+10 yp", "mmcndmgr.dll","icon33 h23")
+        ButtonRunV2.StatusBar := "Run expected V2 code"
+        ButtonRunV2E.OnEvent("Click", RunV2E)
+        
+        ButtonCloseV2E := MyGui.AddPicButton("w24 h24 Disabled", "mmcndmgr.dll","icon62 h23")
+        ButtonCloseV2E.StatusBar := "Close the running expected V2 code"
+        ButtonCloseV2E.OnEvent("Click", CloseV2E)
+        
+        ButtonCompDiffV2E := MyGui.AddPicButton("w24 h24", "shell32.dll","icon239 h20")
+        ButtonCompDiffV2E.StatusBar := "Compare V2 and expected V2 code"
+        ButtonCompDiffV2E.OnEvent("Click", CompDiffV2E)
+        ButtonCompVscV2E := MyGui.Add("Button", " x+10 yp w80", "Compare VSC" )
+        ButtonCompVscV2E.StatusBar := "Compare V2 and Expected V2 code in VS Code"
+        if !FileExist("C:\Users\" A_UserName "\AppData\Local\Programs\Microsoft VS Code\Code.exe"){
+            ButtonCompVscV2E.Visible := 0
+            }
+            ButtonCompVscV2E.OnEvent("Click", CompVscV2E)
+            CheckBoxV2E := MyGui.Add("CheckBox", "yp x+50 Checked", "Expected")
+            CheckBoxV2E.Value := ViewExpectedCode
+            
+            CheckBoxV2E.StatusBar := "Display expected V2 code if it exists"
+            CheckBoxV2E.OnEvent("Click", ViewV2E)
+            
+            ; Save as test
+            ButtonValidateConversion := MyGui.AddPicButton("w24 h24", "shell32.dll","icon259 h18")
+            ButtonValidateConversion.StatusBar := "Save the converted code as valid test"
+            ButtonValidateConversion.OnEvent("Click", ButtonGenerateTest)
+            
+            ; Call Gui_Size whenever the window is resized:
+            MyGui.OnEvent("Size", Gui_Size)
+            
+            MyGui.OnEvent("Close", Gui_Close)
+            ; MyGui.OnEvent("Escape", (*) => ExitApp())
+            
+            FileMenu := Menu()
+            FileMenu.Add "Run Yunit tests", (*) => Run('"' A_ScriptDir "\AutoHotKey Exe\AutoHotkeyV2.exe" '" "' A_ScriptDir '\Tests\Tests.ahk"')
+            FileMenu.Add "Open test folder", (*) => Run(TreeRoot)
+            FileMenu.Add()
+            FileMenu.Add( "E&xit", (*) => ExitApp())
+            SettingsMenu := Menu()
+            SettingsMenu.Add("Testmode", MenuTestMode)
+            SettingsMenu.Add("Include Failing", MenuTestFailing)
+            TestMenu := Menu()
+            TestMenu.Add("AddBracketToHotkeyTest", (*) => V2Edit.Text := AddBracket(V1Edit.Text))
+            TestMenu.Add("GetAltLabelsMap", (*) => V2Edit.Text := GetAltLabelsMap(V1Edit.Text))
+            ViewMenu := Menu()
+            ViewMenu.Add("Zoom In`tCtrl+NumpadAdd", MenuZoomIn)
+            ViewMenu.Add("Zoom Out`tCtrl+NumpadSub", MenuZoomOut)
+            ViewMenu.Add("Show Symols", MenuShowSymols)
+            ViewMenu.Add()
+            ViewMenu.Add("View Tree",MenuViewtree)
+            ViewMenu.Add("View Expected Code",MenuViewExpected)
+            HelpMenu := Menu()
+            HelpMenu.Add("Command Help`tF1",MenuCommandHelp)
+            HelpMenu.Add()
+            HelpMenu.Add("Online v1 docs", (*)=>Run("https://www.autohotkey.com/docs/v1/index.htm"))
+            HelpMenu.Add("Online v2 docs", (*)=>Run("https://www.autohotkey.com/docs/v2/index.htm"))
+            HelpMenu.Add()
+            HelpMenu.Add("Report Issue", (*)=>Run("https://github.com/mmikeww/AHK-v2-script-converter/issues/new"))
+            HelpMenu.Add("Open Github", (*)=>Run("https://github.com/mmikeww/AHK-v2-script-converter"))
+            Menus := MenuBar()
+            Menus.Add("&File", FileMenu)  ; Attach the two submenus that were created above.
+            Menus.Add("&Settings", SettingsMenu)
+            Menus.Add("&View", ViewMenu)
+            Menus.Add( "&Reload", (*) => (Gui_Close(MyGui),Reload()))
+            Menus.Add( "Test", TestMenu)
+            Menus.Add( "Help", HelpMenu)
+            MyGui.MenuBar := Menus
+            
+            ; TODO: This doesn't check box
+            if ViewExpectedCode{
+                ViewMenu.Check("View Expected Code")
+                }
+                MyGui.Opt("+MinSize450x200")
+                MyGui.OnEvent("DropFiles",Gui_DropFiles)
+                
+                ; Correct coordinates to a visible position inside the screens
+                GuiXOpt := (GuiX!="") ? " x" ((GuiX<0) ? 0 : (GuiX+GuiWidth>SysGet(78)) ? SysGet(78)-GuiWidth : GuiX) : ""
+                GuiYOpt := (GuiY!="") ? " y" ((GuiY<0) ? 0 : (GuiY+GuiHeight>SysGet(79)) ? SysGet(79)-GuiHeight : GuiY) : ""
+                
+                ; Display the window. The OS will notify the script whenever the user performs an eligible action:
+                MyGui.Show("h" GuiHeight " w" GuiWidth GuiXOpt GuiYOpt)
+                sleep(500)
+                UserClicked := true
+                
+                if TestMode {
+                    TestMode := !TestMode
+                    UserClicked := false
+                    MenuTestMode('')
+                    }
+                    
+                    if TestFailing {
+                        TestFailing := !TestFailing
+                        UserClicked := false
+                        MenuTestFailing('')
+                        }
+                        
+                        if (strV1Script!=""){
+                            ButtonConvert(myGui)
+                            }
+                            
+                            OnMessage(0x0200, On_WM_MOUSEMOVE)
+                            OnMessage(0x03, On_WM_MOVE)
+                            Return
+                            }
+                            
+                            MenuCommandHelp(*)
+                            {
+                                ogcFocused := MyGui.FocusedCtrl
+                                Type := ogcFocused.Type
+                                if (Type="Edit"){
+                                    
+                                    count := EditGetCurrentLine(ogcFocused)
+                                    text := EditGetLine(count, ogcFocused)
+                                    count := EditGetCurrentCol(ogcFocused)
+                                    
+                                    PreString := RegExReplace(SubStr(text,1,count-1), ".*?([^,，\s\.\t`"\(\)`']*$)", "$1")
+                                    PostString := RegExReplace(SubStr(text,count), "(^[^,，\s,\.\t`"\(\)`']*).*", "$1")
+                                    word := PreString PostString
+                                    
+                                    if !isSet(Url){
+                                        WBGui := Gui()
+                                        WBGui.Opt("+Resize")
+                                        WBGui.MarginX := "0", WBGui.MarginY := "0"
+                                        global Url,WB,WBGui
+                                        WBGui.Title := "AutoHotKey Help"
+                                        ogcActiveXWBC := WBGui.Add("ActiveX", "xm w980 h640 vIE", "Shell.Explorer")
+                                        WB := ogcActiveXWBC.Value
+                                        WBGui.OnEvent("Size", WBGui_Size)
+                                        }
+                                        
+                                        if InStr(ogcFocused.Name,"V1"){
+                                            URLSearch := "https://www.autohotkey.com/docs/v1/search.htm?q="
+                                            }
+                                            else{
+                                                URLSearch := "https://www.autohotkey.com/docs/v2/search.htm?q="
+                                                }
+                                                URL := URLSearch word "&m=2"
+                                                
+                                                WB.Navigate(URL)
+                                                FuncObj := gui_KeyDown.Bind(WB)
+                                                OnMessage(0x100, FuncObj, 2)
+                                                
+                                                WBGui.Show()
+                                                
+                                                WBGui_Size(thisGui, MinMax, Width, Height){
             ogcActiveXWBC.Move(,,Width,Height) ; Gives an error Webbrowser has no method named move
         }
     }
