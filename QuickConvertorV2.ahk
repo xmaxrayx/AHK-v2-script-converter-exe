@@ -7,9 +7,18 @@
 ;   xmaxrayx
 ;=================================================================
 
-{   
+
+
+
+{
     #Include <maxray\randomFilefromFolder_v1_>
-    #HotIf WinExist("Quick Convertor V2")
+    #Include <maxray\GUI\indicator_GUI___Folder\indicator_GUI__v{0.1}>
+
+
+    indicator := indicator_GUI__v0_1()
+    indicator.show("F1 to copy`nF2 to cpy and close")
+
+
     f1::{
         A_Clipboard := (V2Edit.Text)
         Sleep(50)
@@ -20,18 +29,28 @@
         }
 
     f2::{
-        A_Clipboard := (V2Edit.Text)
-        Sleep(50)
-        V1Edit.Text := ""
-        a := randomFileFromFolder_v1_(A_ScriptDir "\Sounds\copy&close", )
-        SoundPlay(a,1)
-        a := randomFileFromFolder_v1_(A_ScriptDir "\Sounds\goodbey", )
-        SoundPlay(a,1)
-        ExitApp()
-
+        copyAndExit()
     }
 }
 
+goodbye(){
+    indicator.close() 
+    a := randomFileFromFolder_v1_(A_ScriptDir "\Sounds\goodbey", )
+    SoundPlay(a,1) ;xmaxrayx
+}
+
+
+
+copyAndExit(){
+    A_Clipboard := (V2Edit.Text)
+    Sleep(50)
+    V1Edit.Text := ""
+    a := randomFileFromFolder_v1_(A_ScriptDir "\Sounds\copy&close", )
+    SoundPlay(a,1)
+    a := randomFileFromFolder_v1_(A_ScriptDir "\Sounds\goodbey", )
+    SoundPlay(a,1)
+    ExitApp()
+}
 
 
 { ;FILE_NAME:  QuickConverterV2.ahk - v2 - Converts AutoHotkey v1.1 to v2.0
@@ -202,6 +221,21 @@ ButtonConvert(*)
     DllCall("QueryPerformanceFrequency", "Int64*", &freq := 0)
     DllCall("QueryPerformanceCounter", "Int64*", &CounterBefore := 0)
     V2Edit.Text := Convert(V1Edit.Text)
+
+     ;================================================xmaxrayx start  ;?newchange?
+    {
+
+
+    
+        if A_Args.Length > 0{
+    
+            copyAndExit()
+        }
+    }
+
+    ;================================================xmaxrayx end
+
+
     DllCall("QueryPerformanceCounter", "Int64*", &CounterAfter := 0)
     SB.SetText("Conversion completed in " Format("{:.4f}", (CounterAfter - CounterBefore) / freq * 1000) "ms", 4) 
 }
@@ -607,6 +641,8 @@ Gui_Size(thisGui, MinMax, Width, Height)  ; Expand/Shrink ListView and TreeView 
 }
 
 Gui_Close(thisGui){
+    thisGui.Hide()
+    goodbye()
     FileTempScript := A_ScriptDir "\Tests\TempScript.ah1"
     if (FileExist(FileTempScript)){
         FileDelete(FileTempScript)
@@ -618,6 +654,7 @@ Gui_Close(thisGui){
     IniWrite(GuiH, "QuickConvertorV2.ini", "Convertor", "GuiHeight")
     IniWrite(GuiX, "QuickConvertorV2.ini", "Convertor", "GuiX")
     IniWrite(GuiY, "QuickConvertorV2.ini", "Convertor", "GuiY")
+    ExitApp()
     ; FileTempScript := A_ScriptDir "\Tests\TempScript.ah1"
     return
 }
@@ -1100,6 +1137,11 @@ ViewV2E(*)
 $Esc::     ;Exit application - Using either <Esc> Hotkey or Goto("MyExit")
 {
 MyExit:
+    try{
+        indicator.close() ;xmaxrayx ;?newchange?
+    }
+
+
     if (MyGui.title != WinGetTitle("A")) {
         Send("{esc}")
         return
@@ -1185,6 +1227,11 @@ XButton2::
 }
 
 ExitFunc(ExitReason, ExitCode){
+    try{
+        indicator.close() ;xmaxrayx ; ?newchange?
+
+    }
+
     CloseV1(myGui) ; Close active scripts
     CloseV2(myGui)
     CloseV2E(myGui)
@@ -1207,3 +1254,11 @@ On_WM_MOVE(wParam, lParam, msg, hwnd){
         IniWrite(GuiY, "QuickConvertorV2.ini", "Convertor", "GuiY")
     }
 }
+
+
+
+
+
+
+
+
