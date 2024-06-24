@@ -1,0 +1,26 @@
+---
+title: "Aotumated AHKv2 coinvertor"
+
+
+
+---
+
+
+
+# wtf is this for?
+
+it's autmated process to 
+
+- Copy AHKv1 script > Run the program > 
+
+
+```{mermaid}
+flowchart LR
+    1[Copy AHKv1 code]-->2[Run the Autmated convertor]
+    2 --> 3[Normal run]-->a[you have shortcut along side with gui]-->b[copy]
+    a-->s[copy and exit]
+    2 --> 4[with Agruments]
+    4 --> L1["1"] --> L11[Copy and quite]
+```
+
+{{< video https://youtu.be/Ev4dA_ODELs?t=18 >}}

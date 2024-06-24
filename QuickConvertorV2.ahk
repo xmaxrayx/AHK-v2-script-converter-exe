@@ -8,6 +8,10 @@
 ;=================================================================
 
 
+if A_Args.Length > 0{
+    global OperationMode := A_Args[1]
+}
+
 
 
 {
@@ -121,28 +125,31 @@ copyAndExit(){
 { ;*** MAIN PROGRAM - BEGINS HERE *****************************************************************************************
 
 
-    ;USE SWITCH CASE TO DEAL WITH COMMAND LINE ARGUMENTS
-    switch A_Args.Length
-    {
-      case 0:  ;IF NO ARGUMENTS THEN LOOK UP SOURCE FILE AND USE DEFAULT OUTPUT FILE
-      {
-         FileTempScript := A_ScriptDir "\Tests\TempScript.ah1"
-      }
-      case 1: ;IF ONE ARGUMENT THEN ASSUME THE ARUGMENT IS THE SOURCE FILE (FN) AND USE DEFAULT OUTPUT FILE
-      {
-         FileTempScript := A_Args[1]
-      }
-      default: ;INCORRECT NUMBER OF ARGUMENTS SUPPLIED -> ERROR
-      {
-        MyMsg := "ERROR: Wrong number of arguments provided.`n"
-        Loop A_Args.Length
-        {
-          MyMsg .= "Arg[" . A_Index . "]:" . A_Args[1] . "`n"
+    FileTempScript := A_ScriptDir "\Tests\TempScript.ah1" ;xmaxrayx   
+        { ;xmaxrayx ;newchange ;disable this
+    ; ;USE SWITCH CASE TO DEAL WITH COMMAND LINE ARGUMENTS
+    ; switch A_Args.Length
+    ; {
+    ;   case 0:  ;IF NO ARGUMENTS THEN LOOK UP SOURCE FILE AND USE DEFAULT OUTPUT FILE
+    ;   {
+    ;      FileTempScript := A_ScriptDir "\Tests\TempScript.ah1"
+    ;   }
+    ;   case 1: ;IF ONE ARGUMENT THEN ASSUME THE ARUGMENT IS THE SOURCE FILE (FN) AND USE DEFAULT OUTPUT FILE
+    ;   {
+    ;      FileTempScript := A_Args[1]
+    ;   }
+    ;   default: ;INCORRECT NUMBER OF ARGUMENTS SUPPLIED -> ERROR
+    ;   {
+    ;     MyMsg := "ERROR: Wrong number of arguments provided.`n"
+    ;     Loop A_Args.Length
+    ;     {
+    ;       MyMsg .= "Arg[" . A_Index . "]:" . A_Args[1] . "`n"
+    ;     }
+    ;     MsgBox MyMsg
+    ;     ExitApp
+    ;   }
+    ; }
         }
-        MsgBox MyMsg
-        ExitApp
-      }
-    }
 
     TempV1Script := FileExist(FileTempScript) ? FileRead(FileTempScript) : ""
     GuiTest(TempV1Script)
@@ -227,10 +234,25 @@ ButtonConvert(*)
 
 
     
-        if A_Args.Length > 0{
-    
+        ; if A_Args.Length > 0{
+            
+        ;     copyAndExit()
+        ; }
+
+
+
+        global OperationMode ; ?newchange? ;xmaxrayx
+        if OperationMode??0 == 1 {
+            MyGui.Hide()
             copyAndExit()
         }
+
+
+
+
+
+
+
     }
 
     ;================================================xmaxrayx end
@@ -714,6 +736,8 @@ GuiTest(strV1Script:="")
     V1Edit := MyGui.Add("Edit", "x280 y0 w600 vvCodeV1 +Multi +WantTab +0x100", strV1Script A_Clipboard ) ;xMaxrayx ;?newchange?  ; Add a fairly wide edit control at the top of the window.
     V1Edit.OnEvent("Change",Edit_Change)
 
+
+
     ButtonRunV1 := MyGui.AddPicButton("w24 h24", "mmcndmgr.dll","icon33 h23")
     ButtonRunV1.StatusBar := "Run the V1 code"
     ButtonRunV1.OnEvent("Click", RunV1)
@@ -910,6 +934,11 @@ GuiTest(strV1Script:="")
             ogcActiveXWBC.Move(,,Width,Height) ; Gives an error Webbrowser has no method named move
         }
     }
+    ; global OperationMode ; ?newchange? ;xmaxrayx
+    ; if OperationMode??0 == 1 {
+    ;     copyAndExit()
+    ; }
+
 }
 MenuShowSymols(*)
 {
