@@ -1,0 +1,58 @@
+[
+  {
+    "objectID": "OrignalRedme/test.html",
+    "href": "OrignalRedme/test.html",
+    "title": "Aotumated AHKv2 coinvertor",
+    "section": "",
+    "text": "you?"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Aotumated AHKv2 coinvertor",
+    "section": "",
+    "text": "wtf is this for?\nit’s autmated process to\n\nCopy AHKv1 script &gt; Run the program &gt;\n\n\n\n\n\n\nflowchart LR\n    1[Copy AHKv1 code]--&gt;2[Run the Autmated convertor]\n    2 --&gt; 3[Normal run]--&gt;a[you have shortcut along side with gui]--&gt;b[copy]\n    a--&gt;s[copy and exit]\n    2 --&gt; 4[with Agruments]\n    4 --&gt; L1[\"1\"] --&gt; L11[Copy and quite]"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About The project",
+    "section": "",
+    "text": "The project Froked from Here\nTo see the Orignal README.MD file go Here\n\nOrignal Authr\nmmikeww \nhttps://github.com/mmikeww"
+  },
+  {
+    "objectID": "HowToUse.html",
+    "href": "HowToUse.html",
+    "title": "How to use",
+    "section": "",
+    "text": "Nothing written , Here an anime image instead"
+  },
+  {
+    "objectID": "OrignalReadmeFile.html",
+    "href": "OrignalReadmeFile.html",
+    "title": "Orignal Readme File",
+    "section": "",
+    "text": "This script will attempt to convert a script written in AHK v1 to the correct syntax so that it works in AHK v2.\nIt is useful to quickly convert some of the bigger syntax changes. Afterwards you can investigate the converted version for other minor changes that the converter didn’t cover.\nI took Frankie’s original converter linked below, and updated it to work with the latest AHK v2 alpha build.\nI’ve also added essential unit tests using the Yunit framework to encourage contributions from others.\nHowever, this project is way more ambitious that I originally thought, and it needs a lot of work. See below for how you can contribute."
+  },
+  {
+    "objectID": "OrignalReadmeFile.html#usage-1",
+    "href": "OrignalReadmeFile.html#usage-1",
+    "title": "Orignal Readme File",
+    "section": "Usage 1",
+    "text": "Usage 1\n\nDownload the full repo. Then run the included QuickConvertorV2.ahk file with AHK V2\nSelect a string in another program and press XButton1 to convert it, or paste it in the first Edit and press the convert button (Green arrow).\nWhen the cursor is on a function in the edit field, press F1 to search the function in the documentation.\nYou can run and close the V1 and V2 code with the play buttons.\nThere are also compare buttons to see better the difference between the scripts.\nWhen working on ConvertFuncs.ahk, please set TestMode on in the Gui Menu Settings, in this mode, all the confirmed tests will be checked if the result stays the same. In this mode you can also save tests easily."
+  },
+  {
+    "objectID": "OrignalReadmeFile.html#usage-2-alternative",
+    "href": "OrignalReadmeFile.html#usage-2-alternative",
+    "title": "Orignal Readme File",
+    "section": "Usage 2 (alternative)",
+    "text": "Usage 2 (alternative)\n\nDownload the full repo. Then run the included v2converter.ahk script with AHK v2\nChoose your input scriptfile.ahk written for AHK v1.\nThe converted script will be named scriptfile_newV2.ahk in the same directory Use v2converter.ahk -h in cmd to use the CLI You can modify parts of how the script behave from editing variables inside the script\nLook over the Visual Diff to manually inspect the changes"
+  },
+  {
+    "objectID": "OrignalReadmeFile.html#note",
+    "href": "OrignalReadmeFile.html#note",
+    "title": "Orignal Readme File",
+    "section": "Note",
+    "text": "Note\nThe AutoHotKey Exe\\AutoHotKeyV2.exe file (as well as the tests\\Tests.exe file) is simply a renamed copy of the AutoHotkey32.exe (v2.0.11) interpreter file. The interpreter alone does nothing without passing a script to it. But here, we take advantage of the default scriptfile feature where the Tests.exe file will look for a file named Tests.ahk and automatically run it. You can make changes to the .ahk file and then just run the .exe. The reason for doing this is because most people will still have AHK v1 installed and associated with *.ahk files. So it would be inconvenient to run this converter without some workarounds. Likewise, the diff\\VisualDiff.exe file (as well as the AutoHotKey Exe\\AutoHotKeyV1.exe file) is just a renamed AutoHotkeyU32-v1.1.24.02.exe"
+  }
+]
